@@ -1,0 +1,10 @@
+{
+  "name": "angular-gallery-directive",
+  "version": "0.1.0",
+  "main": "src/angular-gallery-directive.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}

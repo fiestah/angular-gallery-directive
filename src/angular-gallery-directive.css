@@ -1,0 +1,15 @@
+.gallery-window {
+  position: relative
+  overflow: hidden
+}
+
+.gallery-item-list {
+  position: absolute
+  left: 0
+  top: 0
+  white-space: nowrap
+}
+
+.gallery-item {
+  display: inline-block
+}
