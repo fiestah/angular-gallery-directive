@@ -18,7 +18,7 @@ You can call this anywhere within `gallery` scope in the HTML:
 - `previous()`: Same as `next()`, but in reverse.
 
 ### CSS and Classes
-You'll need this [_minimal_ amount of CSS]() to get it working. All classes below are required to hook up the CSS:
+You'll need this [_minimal_ amount of CSS](src/angular-gallery-directive.css) to get it working. All classes below are required to hook up the CSS:
 
 - `.gallery-item`: The item in the gallery. Could contain `<img>`s or any arbitrary html.
 - `.gallery-item-list`: The "filmstrip" that contains a bunch of `.gallery-item`s.
