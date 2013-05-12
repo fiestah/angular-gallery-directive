@@ -1,4 +1,4 @@
-Basic image gallery built on AngularJS. Likely IE8+ only. [Full Demo](http://jsfiddle.net/thatmarvin/DDRVC/).
+Basic image gallery built on AngularJS. Likely IE8+ only. [Full Demo](http://jsfiddle.net/thatmarvin/FhjBv/embedded/result/).
 
 ## Directives
 
