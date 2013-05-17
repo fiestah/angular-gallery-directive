@@ -22,7 +22,7 @@ angular.module('fiestah.gallery', [])
 
 
         // Scroll by individual items
-        $scope.scrollToIndex = function (index) {
+        $scope.scrollToItem = function (index) {
           var numOfItems = $scope.items.length;
 
           // Going from the last item to the first
@@ -50,11 +50,11 @@ angular.module('fiestah.gallery', [])
             ? $scope.items.length
             : $scope.selectedIndex;
 
-          $scope.scrollTo(index - 1);
+          $scope.scrollToItem(index - 1);
         };
 
         $scope.nextItem = function () {
-          $scope.scrollTo(($scope.selectedIndex + 1) % $scope.items.length)
+          $scope.scrollToItem(($scope.selectedIndex + 1) % $scope.items.length)
         };
 
 
@@ -64,7 +64,7 @@ angular.module('fiestah.gallery', [])
 
           $scope.selectedScreen = screenIndex;
 
-          $scope.scrollToIndex(itemIndex);
+          $scope.scrollToItem(itemIndex);
         };
 
         $scope.previousScreen = function () {
