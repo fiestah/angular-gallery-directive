@@ -9,11 +9,20 @@ angular.module('fiestah.gallery', [])
       '$scope', '$element', '$attrs',
       function ($scope, $element, $attrs) {
         // Parse gallery height and width
-        $scope.WIDTH = parseInt($attrs.galleryWidth, 10);
-        $scope.HEIGHT = parseInt($attrs.galleryHeight, 10);
+        $scope.WIDTH = $attrs.galleryWidth;
+        $scope.HEIGHT = $attrs.galleryHeight;
         $scope.selectedIndex = 0;
+        $scope.selectedScreen = 0;
 
-        $scope.scrollTo = function (index) {
+        var itemWidth = parseInt($attrs.galleryItemWidth, 10);
+
+        // @todo: Adjust these values on window resize
+        var viewportWidth = $element.width();
+        var numPerScreen = Math.floor(viewportWidth / itemWidth);
+
+
+        // Scroll by individual items
+        $scope.scrollToIndex = function (index) {
           var numOfItems = $scope.items.length;
 
           // Going from the last item to the first
@@ -30,12 +39,13 @@ angular.module('fiestah.gallery', [])
             || false;
 
           $scope.selectedIndex = index;
+
           $scope.position = {
-            left: ($scope.WIDTH * index * -1) + 'px'
+            left: -(itemWidth * index) + 'px'
           };
         };
 
-        $scope.previous = function () {
+        $scope.previousItem = function () {
           var index = ($scope.selectedIndex === 0)
             ? $scope.items.length
             : $scope.selectedIndex;
@@ -43,9 +53,36 @@ angular.module('fiestah.gallery', [])
           $scope.scrollTo(index - 1);
         };
 
-        $scope.next = function () {
+        $scope.nextItem = function () {
           $scope.scrollTo(($scope.selectedIndex + 1) % $scope.items.length)
         };
+
+
+        // Scroll by collection of items
+        $scope.scrollToScreen = function (screenIndex) {
+          var itemIndex = (screenIndex * numPerScreen);
+
+          $scope.selectedScreen = screenIndex;
+
+          $scope.scrollToIndex(itemIndex);
+        };
+
+        $scope.previousScreen = function () {
+          var numOfScreens = Math.ceil($scope.items.length / numPerScreen);
+          var index = ($scope.selectedScreen === 0)
+            ? numOfScreens
+            : $scope.selectedScreen;
+
+          $scope.scrollToScreen(index - 1);
+        };
+
+        $scope.nextScreen = function () {
+          var numOfScreens = Math.ceil($scope.items.length / numPerScreen);
+          var index = ($scope.selectedScreen + 1) % numOfScreens;
+
+          $scope.scrollToScreen(index);
+        };
+
       }
     ]
   }
@@ -65,8 +102,7 @@ angular.module('fiestah.gallery', [])
   };
 })
 
-// Directive for container that has all the items. All this really does is
-// setting the size of the film strip viewport
+// Directive for container that contains all the scrollable items
 .directive('galleryItems', function () {
   return {
     restrict: 'EA',
@@ -74,9 +110,15 @@ angular.module('fiestah.gallery', [])
     link: function (scope, el, attrs) {
       // Frames the currently selected item on the film strip
       el.parent().css({
-        width: scope.WIDTH + 'px',
-        height: scope.HEIGHT + 'px'
-      })
+        width: scope.WIDTH,
+        height: scope.HEIGHT
+      });
+
+      // Updates the posiiton of the film strip
+      scope.$watch('position', function (oldValue, newValue) {
+        el.css(scope.position);
+      });
+
     }
   };
 });
