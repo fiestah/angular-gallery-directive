@@ -116,7 +116,9 @@ angular.module('fiestah.gallery', [])
 
       // Updates the posiiton of the film strip
       scope.$watch('position', function (oldValue, newValue) {
-        el.css(scope.position);
+        if (newValue) {
+          el.css(scope.position);
+        }
       });
 
     }
