@@ -6,8 +6,8 @@ angular.module('fiestah.gallery', [])
   return {
     restrict: 'EA',
     controller: [
-      '$scope', '$element', '$attrs',
-      function ($scope, $element, $attrs) {
+      '$scope', '$element', '$attrs', '$window',
+      function ($scope, $element, $attrs, $window) {
         // Parse gallery height and width
         $scope.WIDTH = $attrs.galleryWidth;
         $scope.HEIGHT = $attrs.galleryHeight;
@@ -16,9 +16,21 @@ angular.module('fiestah.gallery', [])
 
         var itemWidth = parseInt($attrs.galleryItemWidth, 10);
 
-        // @todo: Adjust these values on window resize
-        var viewportWidth = $element.width();
-        var numPerScreen = Math.floor(viewportWidth / itemWidth);
+        // Get the number of fully-visible items in the gallery container
+        function getNumPerScreen() {
+          var viewportWidth = $element.width();
+          return Math.floor(viewportWidth / itemWidth);
+        }
+        var numPerScreen = getNumPerScreen();
+
+        // Adjust numPerScreen when the window gets resized if the gallery
+        // width is not in fixed units
+        // @todo: debounce the resize event
+        if (/(%|em)$/.test($scope.WIDTH) {
+          angular.element($window).bind('resize', function () {
+            numPerScreen = getNumPerScreen();
+          });
+        }
 
 
         // Scroll by individual items
