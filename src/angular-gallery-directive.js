@@ -26,7 +26,7 @@ angular.module('fiestah.gallery', [])
         // Adjust numPerScreen when the window gets resized if the gallery
         // width is not in fixed units
         // @todo: debounce the resize event
-        if (/(%|em)$/.test($scope.WIDTH) {
+        if (/(%|em)$/.test($scope.WIDTH)) {
           angular.element($window).bind('resize', function () {
             numPerScreen = getNumPerScreen();
           });
