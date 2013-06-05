@@ -35,21 +35,6 @@ angular.module('fiestah.gallery', [])
 
         // Scroll by individual items
         $scope.scrollToItem = function (index) {
-          var numOfItems = $scope.items.length;
-
-          // Going from the last item to the first
-          $scope.isWrappingNext = ($scope.selectedIndex === numOfItems - 1)
-            && index === 0;
-
-          // Going from the first item to the last
-          $scope.isWrappingPrevious = ($scope.selectedIndex === 0)
-            && index === numOfItems - 1;
-
-          // Either way
-          $scope.isWrapping = $scope.isWrappingNext
-            || $scope.isWrappingPrevious
-            || false;
-
           $scope.selectedIndex = index;
 
           $scope.position = {
@@ -58,14 +43,26 @@ angular.module('fiestah.gallery', [])
         };
 
         $scope.previousItem = function () {
+          var numOfItems = $scope.items.length;
           var index = ($scope.selectedIndex === 0)
-            ? $scope.items.length
-            : $scope.selectedIndex;
+            ? $scope.items.length - 1
+            : $scope.selectedIndex - 1;
 
-          $scope.scrollToItem(index - 1);
+          // Going from the first item to the last
+          $scope.isWrappingPrevious = ($scope.selectedIndex === 0)
+            && index === numOfItems - 1;
+          $scope.isWrapping = $scope.isWrappingPrevious;
+
+          $scope.scrollToItem(index);
         };
 
         $scope.nextItem = function () {
+          // Going from the last item to the first
+          var numOfItems = $scope.items.length;
+          $scope.isWrappingNext = ($scope.selectedIndex === numOfItems - 1)
+            && index === 0;
+          $scope.isWrappingPrevious = $scope.isWrappingNext;
+
           $scope.scrollToItem(($scope.selectedIndex + 1) % $scope.items.length)
         };
 
@@ -73,24 +70,37 @@ angular.module('fiestah.gallery', [])
         // Scroll by collection of items
         $scope.scrollToScreen = function (screenIndex) {
           var itemIndex = (screenIndex * numPerScreen);
+          var numOfScreens = Math.ceil($scope.items.length / numPerScreen);
 
           $scope.selectedScreen = screenIndex;
 
-          $scope.scrollToItem(itemIndex);
+          $scope.position = {
+            left: -(itemWidth * numPerScreen * screenIndex) + 'px'
+          };
         };
 
         $scope.previousScreen = function () {
           var numOfScreens = Math.ceil($scope.items.length / numPerScreen);
           var index = ($scope.selectedScreen === 0)
-            ? numOfScreens
-            : $scope.selectedScreen;
+            ? numOfScreens - 1
+            : $scope.selectedScreen - 1;
 
-          $scope.scrollToScreen(index - 1);
+          // Going from the first screen to the last
+          $scope.isWrappingPrevious = ($scope.selectedScreen === 0)
+            && index === numOfScreens - 1;
+          $scope.isWrapping = $scope.isWrappingPrevious;
+
+          $scope.scrollToScreen(index);
         };
 
         $scope.nextScreen = function () {
           var numOfScreens = Math.ceil($scope.items.length / numPerScreen);
           var index = ($scope.selectedScreen + 1) % numOfScreens;
+
+          // Going from the last screen to the first
+          $scope.isWrappingNext = ($scope.selectedScreen === numOfScreens - 1)
+            && index === 0;
+          $scope.isWrapping = $scope.isWrappingNext;
 
           $scope.scrollToScreen(index);
         };
