@@ -66,14 +66,15 @@ Your HTML should look something like:
 
 ``` html
   <div gallery
-    gallery-width="300"
-    gallery-height="200"
+    gallery-width="300px"
+    gallery-height="200px"
+    gallery-item-width='300'
     ng-controller="GalleryController" class="gallery">
       <!-- The images -->
       <div class="gallery-window">
           <ul gallery-images class="gallery-item-list">
               <li ng-repeat="item in items" class="gallery-item">
-                  <img ng-src="{{item.url}}" width="{{WIDTH}}" height="{{HEIGHT}}">
+                  <img ng-src="{{item.url}}" width="300" height="200">
               </li>
           </ul>
       </div>
@@ -83,13 +84,13 @@ Your HTML should look something like:
 
       <!-- Nav actions -->
       <div class="gallery-nav">
-        <a ng-click="previous()">Previous</a>
-        <a ng-click="next()">Next</a>
+        <a ng-click="previousItem()">Previous</a>
+        <a ng-click="nextItem()">Next</a>
       </div>
   </div>
 ```
 
-Because AngularJS is awesome, you can markup the gallery items however you want (say, add captions to photos) as long as the directives and class names in the right spots.
+Because AngularJS is awesome, you can markup the gallery items however you want (say, add captions to photos) as long as the directives and class names are in the right spots.
 
 Similarly for navigation, just trigger `previousItem()/previousScreen()` or `nextItem()/nextScreen()` using directives like `ng-click` wherever you feel like it.
 
