@@ -55,6 +55,17 @@ angular.module('fiestah.gallery', [])
 
       scope.scrollToItem(index);
     };
+    
+    scope.hasPreviousItem = function () {
+      return scope.selectedIndex !== 0;
+    };
+
+    scope.hasNextItem = function () {
+      var numPerScreen = getNumPerScreen(),
+      numOfItems = getItems().length;
+      return ( (numOfItems - 1) - scope.selectedIndex ) > numPerScreen;
+    };
+    
 
     scope.nextItem = function () {
       // Going from the last item to the first
