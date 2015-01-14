@@ -46,7 +46,7 @@ Call these anywhere within the `gallery` scope:
 - `nextScreen()`
 - `previousScreen()`
 
-### Scroll Suage
+### Sugar to check if there’s a previous/next item:
 - `hasPreviousItem()`: Returns whether or not the currently selected item has a preceeding item
 - `hasNextItem()`: Returns whether or not the currently selected item has a next item
 
