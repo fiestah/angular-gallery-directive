@@ -4,7 +4,7 @@ This is a basic SEO-friendly gallery built on AngularJS. Unlike Bootstrap's caro
 
 No other dependencies other than Angular 1.2+; likely IE9+ only.
 
-<!-- [Full Demo](http://jsfiddle.net/thatmarvin/FhjBv/embedded/result/). -->
+Demo: http://fiestah.github.io/angular-gallery-directive/
 
 
 ## Install
