@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Angular Gallery Directive</title>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//rawgit.com/fiestah/angular-gallery-directive/0.4.0/src/angular-gallery-directive.css">
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular.js"></script>
+  <script src="//rawgit.com/fiestah/angular-gallery-directive/0.4.0/src/angular-gallery-directive.js"></script>
+  <style type='text/css'>
+    /* Customize */
+    .gallery {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -o-user-select: none;
+      user-select: none;
+      position: relative;
+      padding: 5px 5px 0;
+      border: 1px solid #ccc;
+      width: 312px;
+    }
+
+    .gallery .gallery-item-list {
+      margin: 0;
+      -webkit-transition: left 0.25s cubic-bezier(0.755, 0.05, 0.855, 0.06);
+      -moz-transition: left 0.25s cubic-bezier(0.755, 0.05, 0.855, 0.06);
+      -ms-transition: left 0.25s cubic-bezier(0.755, 0.05, 0.855, 0.06);
+      -o-transition: left 0.25s cubic-bezier(0.755, 0.05, 0.855, 0.06);
+      transition: left 0.25s cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    }
+    .gallery .gallery-item-list.wrapping {
+      -webkit-transition: left 0.75s cubic-bezier(0.95, -0.4, 0.6, 1.15);
+      -moz-transition: left 0.75s cubic-bezier(0.95, -0.4, 0.6, 1.15);
+      -ms-transition: left 0.75s cubic-bezier(0.95, -0.4, 0.6, 1.15);
+      -o-transition: left 0.75s cubic-bezier(0.95, -0.4, 0.6, 1.15);
+      transition: left 0.75s cubic-bezier(0.95, -0.4, 0.6, 1.15);
+    }
+    .gallery .gallery-item img {
+      display: block;
+      width: 300px;
+      height: 300px;
+    }
+    .gallery .gallery-indicators {
+      padding: 15px 0;
+      text-align: center;
+      line-height: 0;
+    }
+    .gallery .gallery-indicators .indicator {
+      display: inline-block;
+      text-indent: -999em;
+      width: 12px;
+      height: 12px;
+      -webkit-border-radius: 6px;
+      -moz-border-radius: 6px;
+      border-radius: 6px;
+      background-color: #e0e0e0;
+      line-height: 0;
+      cursor: pointer;
+    }
+    .gallery .gallery-indicators .indicator.selected {
+      background-color: #555;
+    }
+    .gallery .gallery-indicators .indicator + .indicator {
+      margin-left: 6px;
+    }
+
+    .gallery .gallery-nav {
+      margin: 0;
+    }
+    .gallery .gallery-nav .text {
+        display: none;
+    }
+    .gallery .gallery-nav .icon {
+      font-size: 40px;
+      line-height: 300px;
+      padding: 0 15px;
+      opacity: 0.5;
+      color: #fff;
+      text-shadow: 0 0 1px rgba(0, 0, 0, 0.6);
+      -webkit-transition: opacity 0.1s ease-in;
+      -moz-transition: opacity 0.1s ease-in;
+      -ms-transition: opacity 0.1s ease-in;
+      -o-transition: opacity 0.1s ease-in;
+      transition: opacity 0.1s ease-in;
+    }
+    .gallery .gallery-nav a:hover .icon {
+      -webkit-transition: opacity 0.25s ease-in;
+      -moz-transition: opacity 0.25s ease-in;
+      -ms-transition: opacity 0.25s ease-in;
+      -o-transition: opacity 0.25s ease-in;
+      transition: opacity 0.25s ease-in;
+      opacity: 1;
+    }
+    .gallery .gallery-nav .previous, .gallery .gallery-nav .next {
+      position: absolute;
+      top: 5px;
+      height: 300px;
+      width: 45%;
+      text-decoration: none;
+    }
+    .gallery .gallery-nav .previous {
+      left: 5px;
+      text-align: left;
+    }
+    .gallery .gallery-nav .next {
+      right: 5px;
+      text-align: right;
+    }
+  </style>
+  <script>
+  angular.module('gallery-demo', ['fiestah.gallery'])
+
+  .controller('GalleryCtrl', function ($scope) {
+    $scope.images = [{
+      url: 'http://distilleryimage1.s3.amazonaws.com/365732e05bd511e1a87612313804ec91_7.jpg'
+    }, {
+      url: 'http://distilleryimage1.ak.instagram.com/f4fc83a88c7111e2a77722000a1fbc49_7.jpg'
+    }, {
+      url: 'http://distilleryimage4.s3.amazonaws.com/58e7d0922ba711e2b1c522000a9f18eb_7.jpg'
+    }, {
+      url: 'http://distilleryimage5.s3.amazonaws.com/6356b6805ce311e19e4a12313813ffc0_7.jpg'
+    }];
+  });
+  </script>
+</head>
+
+<body ng-app="gallery-demo">
+  <div class="container-fluid">
+    <div class="page-header">
+      <h1>Angular Gallery Directive Demo</h1>
+    </div>
+
+    <div gallery ng-controller="GalleryCtrl" class="gallery">
+      <!-- The images -->
+      <div gallery-window class="gallery-window">
+        <div gallery-item-list class="gallery-item-list" ng-class='{wrapping: isWrapping}'>
+          <div ng-repeat="image in images" gallery-item class="gallery-item">
+            <img ng-src="{{image.url}}">
+          </div>
+        </div>
+      </div>
+
+      <!-- The little dots that tell you where you are -->
+      <div gallery-indicators class="gallery-indicators"></div>
+
+      <!-- Nav actions -->
+      <div class="gallery-nav">
+        <a class="previous" href="" ng-click="previousItem()">
+          <span class="icon fa fa-chevron-left"></span>
+          <span class="text">Previous</span>
+        </a>
+        <a class="next" href="" ng-click="nextItem()">
+          <span class="text">Next</span>
+          <span class="icon fa fa-chevron-right"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
