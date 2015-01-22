@@ -1,15 +1,19 @@
-.gallery-window {
-  position: relative
-  overflow: hidden
+[gallery-window] {
+  position: relative;
+  overflow: hidden;
+
+  /* Customize the dimensions of your gallery */
+  height: 300px;
+  width: 300px;
 }
 
-.gallery-item-list {
-  position: absolute
-  left: 0
-  top: 0
-  white-space: nowrap
+[gallery-item-list] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
 }
 
-.gallery-item {
-  display: inline-block
+[gallery-item] {
+  display: inline-block;
 }

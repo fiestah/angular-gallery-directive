@@ -1,33 +1,27 @@
 angular.module('fiestah.gallery', [])
 
-// Container directive for the items, navigation and nav dots container
-// elements
+/**
+ * Container directive for the items, navigation and nav dots container
+ * elements.
+ */
 .directive('gallery', function () {
   function link(scope, element, attrs) {
-    scope.selectedIndex  = 0;
-    scope.selectedScreen = 0;
-
-
-    // If item elements are built using ng-repeat, they won't be rendered
-    // yet at the time of directive compilation. This is why getItems() and
-    // functions depending on it cannot be called immediately on load.
-    function getItems() {
-      return element.find('[gallery-item-list]').children();
-    }
+    scope.selectedIndex       = 0;
+    scope.selectedScreenIndex = 0;
 
     // Get the offset position of a particular item
     function getItemOffset(index) {
-      return getItems()[index].offsetLeft;
+      return scope.items[index].offsetLeft;
     }
 
     // Get the number of fully-visible items in the gallery container
     function getNumPerScreen() {
       // Get dimensions on demand to account for screen resizes
-      var visibleWidth = element.width();
-      var items        = getItems();
+      var visibleWidth = element[0].offsetWidth;
+      var items        = scope.items;
 
       for (var i=0; i<items.length; i++) {
-        if (getItemOffset(i) + $(items[i]).width() > visibleWidth) {
+        if (getItemOffset(i) + items[i].offsetWidth > visibleWidth) {
           return i;
         }
       }
@@ -43,48 +37,48 @@ angular.module('fiestah.gallery', [])
     };
 
     scope.previousItem = function () {
-      var numOfItems = getItems().length;
-      var index = (scope.selectedIndex === 0)
-        ? numOfItems - 1
-        : scope.selectedIndex - 1;
+      var numOfItems = scope.items.length;
+      var index = scope.hasPreviousItem()
+        ? scope.selectedIndex - 1
+        : numOfItems - 1;
 
       // Going from the first item to the last
-      scope.isWrappingPrevious = (scope.selectedIndex === 0)
-        && index === numOfItems - 1;
-      scope.isWrapping = scope.isWrappingPrevious;
+      scope.isWrapping = scope.isWrappingPrevious = !scope.hasPreviousItem();
 
       scope.scrollToItem(index);
     };
-    
+
+    scope.nextItem = function () {
+      var numOfItems = scope.items.length;
+      var nextIndex = (scope.selectedIndex + 1) % numOfItems;
+
+      // Going from the last item to the first
+      scope.isWrapping = scope.isWrappingNext = !scope.hasNextItem();
+
+      scope.scrollToItem(nextIndex);
+    };
+
     scope.hasPreviousItem = function () {
       return scope.selectedIndex !== 0;
     };
 
     scope.hasNextItem = function () {
-      var numPerScreen = getNumPerScreen(),
-      numOfItems = getItems().length;
-      return ( (numOfItems - 1) - scope.selectedIndex ) > numPerScreen;
-    };
-    
-
-    scope.nextItem = function () {
-      // Going from the last item to the first
-      var numOfItems = getItems().length;
-      scope.isWrappingNext = (scope.selectedIndex === numOfItems - 1);
-      scope.isWrapping = scope.isWrappingNext;
-
-      scope.scrollToItem((scope.selectedIndex + 1) % numOfItems)
+      var numOfItems = scope.items.length;
+      return scope.selectedIndex !== numOfItems - 1;
     };
 
 
-    // Scroll by collection of items
+    // Scroll by collection of items.
+    //
+    // FIXME: `numOfScreens` incorrectly assumes fixed item widths. Accounting
+    // for variable widths gets a little complicated.
     scope.scrollToScreen = function (screenIndex) {
-      var numOfItems = getItems().length;
+      var numOfItems = scope.items.length;
       var numPerScreen = getNumPerScreen();
       var itemIndex = (screenIndex * numPerScreen);
       var numOfScreens = Math.ceil(numOfItems / numPerScreen);
 
-      scope.selectedScreen = screenIndex;
+      scope.selectedScreenIndex = screenIndex;
 
       scope.position = {
         left: -(getItemOffset(numPerScreen * screenIndex)) + 'px'
@@ -92,88 +86,99 @@ angular.module('fiestah.gallery', [])
     };
 
     scope.previousScreen = function () {
-      var numOfItems = getItems().length;
+      var numOfItems = scope.items.length;
       var numOfScreens = Math.ceil(numOfItems / getNumPerScreen());
-      var index = (scope.selectedScreen === 0)
-        ? numOfScreens - 1
-        : scope.selectedScreen - 1;
+      var index = scope.hasPreviousScreen()
+        ? scope.selectedScreenIndex - 1
+        : numOfScreens - 1;
 
       // Going from the first screen to the last
-      scope.isWrappingPrevious = (scope.selectedScreen === 0)
-        && index === numOfScreens - 1;
-      scope.isWrapping = scope.isWrappingPrevious;
+      scope.isWrapping = scope.isWrappingPrevious = !scope.hasPreviousScreen();
 
       scope.scrollToScreen(index);
     };
 
     scope.nextScreen = function () {
-      var numOfItems = getItems().length;
+      var numOfItems = scope.items.length;
       var numOfScreens = Math.ceil(numOfItems / getNumPerScreen());
-      var index = (scope.selectedScreen + 1) % numOfScreens;
+      var nextIndex = (scope.selectedScreenIndex + 1) % numOfScreens;
 
       // Going from the last screen to the first
-      scope.isWrappingNext = (scope.selectedScreen === numOfScreens - 1)
-        && index === 0;
-      scope.isWrapping = scope.isWrappingNext;
+      scope.isWrapping = scope.isWrappingNext = !scope.hasNextScreen();
 
-      scope.scrollToScreen(index);
+      scope.scrollToScreen(nextIndex);
+    };
+
+    scope.hasPreviousScreen = function () {
+      return scope.selectedScreenIndex !== 0;
+    };
+
+    scope.hasNextScreen = function () {
+      var numOfItems = scope.items.length;
+      var numOfScreens = Math.ceil(numOfItems / getNumPerScreen());
+      return scope.selectedScreenIndex !== numOfScreens - 1;
     };
   }
 
   return {
-    restrict: 'A',
-    link: link
-  };
-})
-
-// Directive that shows the position of the currently selected item
-.directive('galleryIndicators', function () {
-  return {
     restrict: 'EA',
-    template: '<a'
-      + ' class="indicator"'
-      + ' ng-repeat="item in items"'
-      + ' ng-class="{selected: selectedIndex === $index}"'
-      + ' ng-click="scrollTo({{$index}})"'
-      + '><span class="num">{{$index + 1}}</span></a>'
-  };
-})
-
-// The visible area of the "window" that frames the "film strip"
-.directive('galleryWindow', ['$interval', function ($interval) {
-  return {
-    restrict: 'A',
-    link: function (scope, element, attrs) {
-      // Frames the currently selected item on the film strip. Polling here is
-      // needed when waiting for ng-repeat to finish rendering so we can set
-      // the visible area to the height of the film strip
-      var filmStripEl = $(element.children()[0]);
-      var i = 0;
-      var poll = $interval(function () {
-        var height = filmStripEl.height();
-        i++; // Keep a counter to give up after 5s
-
-        if (height > 0 || i >= 20) {
-          element.css({ height: height });
-          $interval.cancel(poll);
-        }
-      }, 250);
+    link: link,
+    controller: function ($scope) {
+      this.registerItems = function (items) {
+        $scope.items = items;
+      };
     }
   };
-}])
+})
 
-// Directive for the "film strip" parent element which contains all the
-// scrollable items
+/**
+ * Directive for the "film strip" parent element which contains all the
+ * scrollable items.
+ */
 .directive('galleryItemList', function () {
   return {
-    restrict: 'A',
-    link: function (scope, element, attrs) {
-      // Updates the posiiton of the film strip
+    restrict: 'EA',
+    link: function (scope, element) {
+      // Updates the position of the film strip
       scope.$watch('position', function () {
         element.css(scope.position || {
           left: 0
         });
       });
     }
+  };
+})
+
+/**
+ * Keep track of each item as it gets added to the DOM tree. Doing it
+ * dynamically this way because ng-repeat (correctly) does not have a done
+ * state, and thus depends on the gallery item to register itself as it gets
+ * compiled by angular.
+ */
+.directive('galleryItem', function () {
+  function link(scope, element, attrs, galleryCtrl) {
+    var items = element.parent().children();
+    galleryCtrl.registerItems(items);
+  }
+
+  return {
+    require: '^gallery',
+    restrict: 'EA',
+    link: link
+  }
+})
+
+/**
+ * Directive that shows the position of the currently selected item.
+ */
+.directive('galleryIndicators', function () {
+  return {
+    restrict: 'EA',
+    template: '<a'
+      + ' href="" class="indicator"'
+      + ' ng-repeat="item in items track by $index"'
+      + ' ng-class="{selected: selectedIndex === $index}"'
+      + ' ng-click="scrollToItem($index)"'
+      + '><span class="num">{{$index + 1}}</span></a>'
   };
 });
