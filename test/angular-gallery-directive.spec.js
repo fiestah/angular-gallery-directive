@@ -50,13 +50,26 @@ function runTests(fixture) {
 
   describe('scrolling items', function () {
     describe('scrollToItem(n)', function () {
+      var n = 2;
+
       it('shows the n-th item', function () {
-        var n = 2;
         this.$scope.scrollToItem(n);
         this.$scope.$digest();
 
         expect(getOffset()).to.equal(-n * getItemWidth() + 'px');
       });
+      it('resets isWrapping', inject(function ($timeout) {
+        // Trigger wrapping first
+        this.$scope.previousItem();
+        this.$scope.$digest();
+
+        // Scroll to item
+        this.$scope.scrollToItem(n);
+        this.$scope.$digest();
+        $timeout.flush();
+
+        expect(this.$scope.isWrapping).to.be.false;
+      }));
     });
 
     describe('previousItem()', function () {

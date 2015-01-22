@@ -4,7 +4,7 @@ angular.module('fiestah.gallery', [])
  * Container directive for the items, navigation and nav dots container
  * elements.
  */
-.directive('gallery', function () {
+.directive('gallery', function ($timeout) {
   function link(scope, element, attrs) {
     scope.selectedIndex       = 0;
     scope.selectedScreenIndex = 0;
@@ -34,6 +34,11 @@ angular.module('fiestah.gallery', [])
       scope.position = {
         left: -(getItemOffset(index)) + 'px'
       };
+
+      // Reset isWrapping
+      $timeout(function () {
+        scope.isWrapping = false;
+      }, 50);
     };
 
     scope.previousItem = function () {
