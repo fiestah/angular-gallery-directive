@@ -1,5 +1,7 @@
 # angular-gallery-directive
 
+[![Build Status](http://img.shields.io/travis/fiestah/angular-gallery-directive.svg)](http://travis-ci.org/fiestah/angular-gallery-directive)
+
 This is a basic SEO-friendly gallery built on AngularJS. Unlike Bootstrap's carousel component, this works with html rendered on the server-side (instead of `ng-repeat`) so that search bots can crawl the gallery content. You may still use `ng-repeat` if you don't care about that.
 
 No dependencies other than Angular 1.2+; likely IE9+ only.
